@@ -12,7 +12,7 @@ class App extends Component {
     this.state = {
       notes: new Map({ test: 'a' }),
     };
-    this.test_AddNote = this.test_AddNote.bind(this);
+    this.testAddNote = this.testAddNote.bind(this);
   }
 
   testAddNote = (note) => {
@@ -24,7 +24,15 @@ class App extends Component {
   }
 
   render() {
-    const newNote = new Note();
+    const newNote = new Note({
+      id: '',
+      title: '',
+      text: '',
+      x: '',
+      y: '',
+      z: '',
+
+    });
     this.testAddNote(newNote);
     console.log(this.state.notes);
     return (

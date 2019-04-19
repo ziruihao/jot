@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Draggable from 'react-draggable';
 
 class Note extends Component {
-  consturctor(props) {
+  constructor(props) {
     super(props);
     this.state = {
       id: props.id,
