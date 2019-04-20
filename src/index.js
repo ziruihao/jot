@@ -5,38 +5,43 @@ import './style.scss';
 
 // importing components
 import Note from './components/note';
+import NoteMaker from './components/noteMaker';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      notes: new Map({ test: 'a' }),
+      notes: Map(),
     };
-    this.testAddNote = this.testAddNote.bind(this);
   }
 
-  testAddNote = (note) => {
+  createNote = (title) => {
+    console.log('creating note');
+    const newNote = {
+      title,
+      text: '',
+      x: 0,
+      y: 0,
+      z: 0,
+    };
     this.setState(
       prevState => ({
-        notes: prevState.notes.set('test', note),
+        notes: prevState.notes.set('id', newNote),
       }),
     );
   }
 
   render() {
-    const newNote = new Note({
-      id: '',
-      title: '',
-      text: '',
-      x: '',
-      y: '',
-      z: '',
-
-    });
-    this.testAddNote(newNote);
-    console.log(this.state.notes);
+    const returnedNotes = this.state.notes.entrySeq().map(([id, note]) => <Note key={id} title={note.title} x={note.x} y={note.y} z={note.z} />);
     return (
-      <div />
+      <div>
+        <div>
+          <NoteMaker createNote={this.createNote} />
+        </div>
+        <div>
+          {returnedNotes}
+        </div>
+      </div>
     );
   }
 }
