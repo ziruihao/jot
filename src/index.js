@@ -20,8 +20,8 @@ class App extends Component {
     const newNote = {
       title,
       text: '',
-      x: 0,
-      y: 0,
+      x: 70,
+      y: 50,
       z: 0,
     };
     this.setState(

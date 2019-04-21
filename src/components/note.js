@@ -7,13 +7,27 @@ class Note extends Component {
     super(props);
     this.state = {
       title: props.title,
+      x: props.x,
+      y: props.y,
     };
   }
 
+
   render() {
     return (
-      <Draggable>
-        <p>{this.state.title}</p>
+      <Draggable
+        handle=".draggable"
+        grid={[1, 1]}
+        defaultPosition={{ x: 20, y: 20 }}
+        position={{
+          x: this.state.x,
+          y: this.state.y,
+        }}
+        onStart={this.onStartDrag}
+        onDrag={this.onDrag}
+        onStop={this.onStopDrag}
+      >
+        <p className="draggable">{this.state.title}</p>
       </Draggable>
     );
   }
