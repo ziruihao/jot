@@ -7,7 +7,6 @@ class NoteMaker extends Component {
       title: '',
     };
     this.onInputChange = this.onInputChange.bind(this);
-    this.submitted = this.submitted.bind(this);
   }
 
   onInputChange(event) {
@@ -17,7 +16,7 @@ class NoteMaker extends Component {
     });
   }
 
-  submitted(event) {
+  submitted = (event) => {
     this.props.createNote(this.state.title);
   }
 
