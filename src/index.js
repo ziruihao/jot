@@ -7,6 +7,9 @@ import './style.scss';
 import Note from './components/note';
 import NoteMaker from './components/noteMaker';
 
+// modular functions from firebase wrapper
+import * as db from './services/datastore';
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -28,10 +31,10 @@ class App extends Component {
     const noteData = {
       id: this.state.keyCounter,
       title,
-      text: '',
+      text: 'hello',
       x: 70,
       y: 50,
-      z: 0,
+      z: this.state.keyCounter,
     };
     // adds note into the map
     this.setState(
@@ -39,6 +42,18 @@ class App extends Component {
         notes: prevState.notes.set(noteData.id, noteData),
       }),
     );
+  }
+
+  getHighestZ = () => {
+    let currentHighestZ = 0;
+    this.state.notes.entrySeq().forEach(([id, note]) => {
+      if (note.z >= currentHighestZ) {
+        currentHighestZ = note.z;
+      }
+      return null;
+    });
+    // console.log(currentHighestZ);
+    return currentHighestZ;
   }
 
   deleteNote = (id) => {
@@ -51,7 +66,7 @@ class App extends Component {
   }
 
   render() {
-    const returnedNotes = this.state.notes.entrySeq().map(([id, note]) => <Note note={note} key={id} deleteNote={this.deleteNote} />);
+    const returnedNotes = this.state.notes.entrySeq().map(([id, note]) => <Note note={note} key={id} deleteNote={this.deleteNote} getHighestZ={this.getHighestZ} />);
     return (
       <div>
         <div>

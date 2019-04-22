@@ -8,35 +8,72 @@ class Note extends Component {
     this.state = {
       id: props.note.id,
       title: props.note.title,
+      text: props.note.text,
       x: props.note.x,
       y: props.note.y,
+      z: props.note.id,
       isEditing: false,
     };
     this.onDrag = this.onDrag.bind(this);
   }
 
+  /**
+   * Handler for dragging.
+   * @param {*} e
+   * @param {*} ui
+   */
   onDrag(e, ui) {
+    console.log('dragging');
     e.preventDefault();
-    console.log(ui);
+    console.log(this.props.getHighestZ());
     this.setState({
       x: ui.x,
       y: ui.y,
+      z: this.props.getHighestZ() + 1,
     });
   }
 
-  deleted = (id) => {
+  /**
+   * Switches whether the note is being edited or is just being dragged.
+   */
+  toggleEdit = () => {
+    console.log('editing');
+    this.setState(
+      prevState => ({
+        isEditing: !prevState.isEditing,
+      }),
+    );
+  }
+
+  /**
+   * Updates the NoteMaker state with whatever is in the <textarea> field.
+   * @param {} event
+   */
+  onInputChange = (event) => {
+    this.setState({
+      text: event.target.value,
+    });
+  }
+
+  deleted = () => {
     console.log(this.state.title);
     this.props.deleteNote(this.state.id);
   }
 
   renderWhetherEditing() {
+    let editOrNot = '';
     if (this.state.isEditing) {
+      editOrNot = 'save';
       return (
-        <div>
-          <div className="noteBody" dangerouslySetInnerHTML={{ __html: marked(this.props.note.text || '') }} />
+        <div className="note" style={{ left: this.state.x, top: this.state.y }}>
+          <p>{this.state.title}</p>
+          <i onClick={this.deleted} role="button" tabIndex={0} className="fa fa-trash-o" />
+          <button type="button" onClick={this.toggleEdit}>{editOrNot}</button>
+          <textarea id="note-editor" name="textarea" onChange={this.onInputChange} value={this.state.text} />
         </div>
       );
     } else {
+      editOrNot = 'edit';
       return (
         <Draggable
           handle=".draggable"
@@ -48,9 +85,11 @@ class Note extends Component {
           }}
           onDrag={this.onDrag}
         >
-          <div className="draggable">
+          <div className="draggable note" style={{ zIndex: this.state.z }}>
             <p>{this.state.title}</p>
-            <button type="button" onClick={this.deleted}>delete</button>
+            <i onClick={this.handleDeleteClick} role="button" tabIndex={0} className="fa fa-trash-o" />
+            <button type="button" onClick={this.toggleEdit}>{editOrNot}</button>
+            <div className="noteBody" dangerouslySetInnerHTML={{ __html: marked(this.state.text || '') }} />
           </div>
         </Draggable>
       );
