@@ -19,11 +19,15 @@ export function fetchNotes(callback) {
     callback(newNoteState);
   });
 }
-export function addNotes(note) {
-  const newNoteKey = firebase.database().ref().child('posts').push().key;
-
-  const updates = {};
-  updates[`/posts/${newNoteKey}`] = note;
-
-  return firebase.database().ref().update(updates);
+export function updateNote(id, noteUpdate) {
+  database.ref('notes').child(id).update(noteUpdate).then(() => { console.log(`firebase updateNote of ID: ${id} successful`); })
+    .catch(() => { console.log(`firebase updateNote of ID:${id} failed`); });
+}
+export function addNote(newNote) {
+  const id = database.ref('notes').push(newNote).key.toString();
+  updateNote(id, { id });
+}
+export function deleteNote(id) {
+  database.ref('notes').child(id).remove().then(() => { console.log(`firebase deleteNote of ID:${id} successful`); })
+    .catch(() => { console.log(`firebase deleteNote of ID:${id} failed`); });
 }

@@ -51,7 +51,7 @@ class Note extends Component {
     });
   }
 
-  deleted = () => {
+  deleteNote = () => {
     this.props.deleteNote(this.props.note.id);
   }
 
@@ -62,7 +62,7 @@ class Note extends Component {
       return (
         <div className="note" style={{ left: this.props.note.x, top: this.props.note.y }}>
           <p>{this.props.note.title}</p>
-          <i onClick={this.deleted} role="button" tabIndex={0} className="fa fa-trash-o" />
+          <i onClick={this.deleteNote} role="button" tabIndex={0} className="fa fa-trash-o" />
           <button type="button" onClick={this.toggleEdit}>{editOrNot}</button>
           <textarea id="note-editor" name="textarea" onChange={this.onInputChange} value={this.props.note.text} />
         </div>
@@ -83,7 +83,8 @@ class Note extends Component {
         >
           <div className="draggable note" style={{ zIndex: this.props.note.z }}>
             <p>{this.props.note.title}</p>
-            <i onClick={this.handleDeleteClick} role="button" tabIndex={0} className="fa fa-trash-o" />
+            <button type="submit" onClick={this.deleteNote}>delete</button>
+            <i onClick={this.deleted} role="button" tabIndex={0} className="fa fa-trash-o" />
             <button type="button" onClick={this.toggleEdit}>{editOrNot}</button>
             <div className="noteBody" dangerouslySetInnerHTML={{ __html: marked(this.props.note.text || '') }} />
           </div>

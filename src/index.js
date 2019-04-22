@@ -15,10 +15,12 @@ class App extends Component {
     super(props);
     this.state = {
       notes: Map(),
-      keyCounter: 0,
     };
   }
 
+  /**
+   * On mount, a listener will be attached to continously read data from firebase.
+   */
   componentDidMount() {
     db.fetchNotes((notes) => {
       this.setState({ notes: Map(notes) });
@@ -29,36 +31,39 @@ class App extends Component {
    * Creates a note.
    */
   createNote = (title) => {
-    // increments a new key via a counter
-    this.setState(
-      prevState => ({
-        keyCounter: prevState.keyCounter + 1,
-      }),
-    );
+    // // increments a new key via a counter
+    // this.setState(
+    //   prevState => ({
+    //     keyCounter: prevState.keyCounter + 1,
+    //   }),
+    // );
     // creates the note in object notation form
-    const noteData = {
-      id: this.state.keyCounter,
+    const newNote = {
+      id: '',
       title,
-      text: 'hello',
+      text: '',
       x: 70,
       y: 50,
-      z: this.state.keyCounter,
+      z: this.getHighestZ(),
     };
+
+    db.addNote(newNote);
     // adds note into the map
-    this.setState(
-      prevState => ({
-        notes: prevState.notes.set(noteData.id, noteData),
-      }),
-    );
+    // this.setState(
+    //   prevState => ({
+    //     notes: prevState.notes.set(noteData.id, noteData),
+    //   }),
+    // );
   }
 
   /**
    * Updates any properties of existing notes.
    */
   updateNote = (id, fields) => {
-    this.setState(prevState => ({
-      notes: prevState.notes.update(id, (n) => { return Object.assign({}, n, fields); }),
-    }));
+    db.updateNote(id, fields);
+    // this.setState(prevState => ({
+    //   notes: prevState.notes.update(id, (n) => { return Object.assign({}, n, fields); }),
+    // }));
   }
 
   /**
@@ -81,12 +86,12 @@ class App extends Component {
    * Deletes a note.
    */
   deleteNote = (id) => {
-    console.log('deleting note');
-    this.setState(
-      prevState => ({
-        notes: prevState.notes.delete(id),
-      }),
-    );
+    db.deleteNote(id);
+    // this.setState(
+    //   prevState => ({
+    //     notes: prevState.notes.delete(id),
+    //   }),
+    // );
   }
 
   render() {
