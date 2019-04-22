@@ -22,7 +22,7 @@ class NoteMaker extends Component {
   /**
    * Activates callback to indicate that the user wants to create a new note to App.
    */
-  createNote = (event) => {
+  createNote = () => {
     this.props.createNote(this.state.title);
   }
 

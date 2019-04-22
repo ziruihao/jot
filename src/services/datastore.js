@@ -12,3 +12,18 @@ const config = {
 firebase.initializeApp(config);
 
 const database = firebase.database();
+
+export function fetchNotes(callback) {
+  database.ref('notes').on('value', (snapshot) => {
+    const newNoteState = snapshot.val();
+    callback(newNoteState);
+  });
+}
+export function addNotes(note) {
+  const newNoteKey = firebase.database().ref().child('posts').push().key;
+
+  const updates = {};
+  updates[`/posts/${newNoteKey}`] = note;
+
+  return firebase.database().ref().update(updates);
+}

@@ -6,12 +6,6 @@ class Note extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: props.note.id,
-      title: props.note.title,
-      text: props.note.text,
-      x: props.note.x,
-      y: props.note.y,
-      z: props.note.id,
       isEditing: false,
     };
     this.onDrag = this.onDrag.bind(this);
@@ -23,12 +17,15 @@ class Note extends Component {
    * @param {*} ui
    */
   onDrag(e, ui) {
-    console.log('dragging');
     e.preventDefault();
-    console.log(this.props.getHighestZ());
-    this.setState({
+    this.props.updateNote(this.props.note.id, {
       x: ui.x,
       y: ui.y,
+    });
+  }
+
+  startDrag = () => {
+    this.props.updateNote(this.props.note.id, {
       z: this.props.getHighestZ() + 1,
     });
   }
@@ -37,7 +34,6 @@ class Note extends Component {
    * Switches whether the note is being edited or is just being dragged.
    */
   toggleEdit = () => {
-    console.log('editing');
     this.setState(
       prevState => ({
         isEditing: !prevState.isEditing,
@@ -46,18 +42,17 @@ class Note extends Component {
   }
 
   /**
-   * Updates the NoteMaker state with whatever is in the <textarea> field.
+   * Updates the props.text with whatever is in the <textarea> field.
    * @param {} event
    */
   onInputChange = (event) => {
-    this.setState({
+    this.props.updateNote(this.props.note.id, {
       text: event.target.value,
     });
   }
 
   deleted = () => {
-    console.log(this.state.title);
-    this.props.deleteNote(this.state.id);
+    this.props.deleteNote(this.props.note.id);
   }
 
   renderWhetherEditing() {
@@ -65,11 +60,11 @@ class Note extends Component {
     if (this.state.isEditing) {
       editOrNot = 'save';
       return (
-        <div className="note" style={{ left: this.state.x, top: this.state.y }}>
-          <p>{this.state.title}</p>
+        <div className="note" style={{ left: this.props.note.x, top: this.props.note.y }}>
+          <p>{this.props.note.title}</p>
           <i onClick={this.deleted} role="button" tabIndex={0} className="fa fa-trash-o" />
           <button type="button" onClick={this.toggleEdit}>{editOrNot}</button>
-          <textarea id="note-editor" name="textarea" onChange={this.onInputChange} value={this.state.text} />
+          <textarea id="note-editor" name="textarea" onChange={this.onInputChange} value={this.props.note.text} />
         </div>
       );
     } else {
@@ -80,16 +75,17 @@ class Note extends Component {
           grid={[1, 1]}
           defaultPosition={{ x: 0, y: 0 }}
           position={{
-            x: this.state.x,
-            y: this.state.y,
+            x: this.props.note.x,
+            y: this.props.note.y,
           }}
+          onStart={this.startDrag}
           onDrag={this.onDrag}
         >
-          <div className="draggable note" style={{ zIndex: this.state.z }}>
-            <p>{this.state.title}</p>
+          <div className="draggable note" style={{ zIndex: this.props.note.z }}>
+            <p>{this.props.note.title}</p>
             <i onClick={this.handleDeleteClick} role="button" tabIndex={0} className="fa fa-trash-o" />
             <button type="button" onClick={this.toggleEdit}>{editOrNot}</button>
-            <div className="noteBody" dangerouslySetInnerHTML={{ __html: marked(this.state.text || '') }} />
+            <div className="noteBody" dangerouslySetInnerHTML={{ __html: marked(this.props.note.text || '') }} />
           </div>
         </Draggable>
       );

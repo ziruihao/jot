@@ -19,8 +19,16 @@ class App extends Component {
     };
   }
 
+  componentDidMount() {
+    db.fetchNotes((notes) => {
+      this.setState({ notes: Map(notes) });
+    });
+  }
+
+  /**
+   * Creates a note.
+   */
   createNote = (title) => {
-    console.log('creating note');
     // increments a new key via a counter
     this.setState(
       prevState => ({
@@ -44,20 +52,36 @@ class App extends Component {
     );
   }
 
+  /**
+   * Updates any properties of existing notes.
+   */
+  updateNote = (id, fields) => {
+    this.setState(prevState => ({
+      notes: prevState.notes.update(id, (n) => { return Object.assign({}, n, fields); }),
+    }));
+  }
+
+  /**
+   * Retrieves highest z-index of all existing notes; used for dynamic z-index feature.
+   */
   getHighestZ = () => {
+    let currentHighestID;
     let currentHighestZ = 0;
     this.state.notes.entrySeq().forEach(([id, note]) => {
       if (note.z >= currentHighestZ) {
+        currentHighestID = id;
         currentHighestZ = note.z;
       }
       return null;
     });
-    // console.log(currentHighestZ);
     return currentHighestZ;
   }
 
+  /**
+   * Deletes a note.
+   */
   deleteNote = (id) => {
-    console.log('deleting node');
+    console.log('deleting note');
     this.setState(
       prevState => ({
         notes: prevState.notes.delete(id),
@@ -66,7 +90,7 @@ class App extends Component {
   }
 
   render() {
-    const returnedNotes = this.state.notes.entrySeq().map(([id, note]) => <Note note={note} key={id} deleteNote={this.deleteNote} getHighestZ={this.getHighestZ} />);
+    const returnedNotes = this.state.notes.entrySeq().map(([id, note]) => <Note note={note} key={id} updateNote={this.updateNote} deleteNote={this.deleteNote} getHighestZ={this.getHighestZ} />);
     return (
       <div>
         <div>
