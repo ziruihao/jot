@@ -50,7 +50,7 @@ export function addNote(uid, newNote) {
   const id = database.ref(`notes/${uid}`).push(newNote).key.toString();
   updateNote(uid, id, { id });
 }
-export function deleteNote(id) {
-  database.ref('notes').child(id).remove().then(() => { console.log(`firebase deleteNote of ID:${id} successful`); })
+export function deleteNote(uid, id) {
+  database.ref(`notes/${uid}`).child(id).remove().then(() => { console.log(`firebase deleteNote of ID:${id} successful`); })
     .catch(() => { console.log(`firebase deleteNote of ID:${id} failed`); });
 }

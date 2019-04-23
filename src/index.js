@@ -43,23 +43,23 @@ class App extends Component {
     // Essentially, I cannot immediately fetch from firebase after mounting.
   }
 
-  // logout2 = () => {
-  //   console.log('called');
-  //   this.setState(
-  //     prevState => ({
-  //       menuOpen: !prevState.menuOpen,
-  //     }),
-  //   );
-  // }
-
+  /**
+   * Activates login step in firebase.
+   */
   login = () => {
     db.auth(this.updateUserInfo, this.updateMap);
   }
 
+  /**
+   * Retrieves data from firebase on user's notes.
+   */
   updateMap = (notes) => {
     this.setState({ notes: Map(notes) });
   }
 
+  /**
+   * Updates newly logged-in user.
+   */
   updateUserInfo = (uid, displayName) => {
     this.setState({
       uid,
@@ -67,6 +67,9 @@ class App extends Component {
     });
   }
 
+  /**
+   * Activates logout step in firebase.
+   */
   logout = () => {
     db.deAuth();
     this.setState({ uid: null });
@@ -115,7 +118,7 @@ class App extends Component {
    * Deletes a note.
    */
   deleteNote = (id) => {
-    db.deleteNote(id);
+    db.deleteNote(this.state.uid, id);
   }
 
   renderWhetherLoggedIn() {

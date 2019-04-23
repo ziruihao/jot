@@ -104,6 +104,9 @@ class Note extends Component {
     });
   }
 
+  /**
+   * Sends callback to delete note.
+   */
   deleteNote = () => {
     this.props.deleteNote(this.props.note.id);
   }
