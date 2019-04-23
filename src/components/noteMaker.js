@@ -44,7 +44,6 @@ class NoteMaker extends Component {
     this.setState({
       title: event.target.value,
     });
-    console.log(this.state.title);
   }
 
   /**
@@ -55,7 +54,6 @@ class NoteMaker extends Component {
     this.setState({
       text: event.target.value,
     });
-    console.log(this.state.text);
   }
 
   /**

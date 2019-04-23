@@ -13,6 +13,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
+import { FormHelperText } from '@material-ui/core';
 
 /**
  * Custom styling overrides for material-ui
@@ -25,14 +26,18 @@ const styles = theme => ({
     minWidth: 275,
     boxShadow: '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22)',
   },
-  'card:hover': {
-    boxShadow: '0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)',
-  },
+  // 'card:hover': {
+  //   boxShadow: '0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)',
+  // },
   title: {
     fontSize: 14,
   },
   pos: {
     marginBottom: 12,
+  },
+  actions: {
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
 });
 
@@ -41,6 +46,7 @@ class Note extends Component {
     super(props);
     this.state = {
       isEditing: false,
+      date: new Date(),
     };
     this.onDrag = this.onDrag.bind(this);
   }
@@ -58,6 +64,9 @@ class Note extends Component {
     });
   }
 
+  /**
+   * Activates once when drag begins, used to set current note with highest z-index.
+   */
   startDrag = () => {
     this.props.updateNote(this.props.note.id, {
       z: this.props.getHighestZ() + 1,
@@ -128,7 +137,7 @@ class Note extends Component {
               value={this.props.note.text}
             />
           </CardContent>
-          <CardActions>
+          <CardActions className={classes.actions}>
             <IconButton onClick={this.toggleEdit} className={classes.button} aria-label="Check">
               <CheckIcon />
             </IconButton>
@@ -157,11 +166,11 @@ class Note extends Component {
                 {this.props.note.title}
               </Typography>
               <Typography className={classes.pos} color="textSecondary">
-                date_stamp
+                {`Edited ${this.state.date.getMonth()}/${this.state.date.getDate()}/${this.state.date.getFullYear()}   ${this.state.date.getHours()}:${this.state.date.getMinutes()}`}
               </Typography>
               <Typography className="noteBody" component="p" dangerouslySetInnerHTML={{ __html: marked(this.props.note.text || '') }} />
             </CardContent>
-            <CardActions>
+            <CardActions className={classes.actions}>
               <IconButton onClick={this.toggleEdit} className={classes.button} aria-label="Edit">
                 <EditIcon />
               </IconButton>
