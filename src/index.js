@@ -3,18 +3,35 @@ import ReactDOM from 'react-dom';
 import { Map } from 'immutable';
 import './style.scss';
 
-// importing components
-import Note from './components/note';
-import NoteMaker from './components/noteMaker';
+// material-ui imports
+import { MuiThemeProvider, createMuiTheme, Typography } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
 
 // modular functions from firebase wrapper
 import * as db from './services/datastore';
+
+// importing components
+import NoteMaker from './components/noteMaker';
+import Note from './components/note';
+import Nav from './components/nav';
+// import Menu from './components/menu';
+
+/**
+ * Theme override for material-ui
+ */
+const theme = createMuiTheme({
+
+});
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       notes: Map(),
+      uid: null,
+      displayName: '',
+      menuOpen: false,
     };
   }
 
@@ -22,48 +39,60 @@ class App extends Component {
    * On mount, a listener will be attached to continously read data from firebase.
    */
   componentDidMount() {
-    db.fetchNotes((notes) => {
-      this.setState({ notes: Map(notes) });
+    // I am no longer using this because I am doing the authentication extra credit, which requires different 'logged in' or 'logged out' states.
+    // Essentially, I cannot immediately fetch from firebase after mounting.
+  }
+
+  // logout2 = () => {
+  //   console.log('called');
+  //   this.setState(
+  //     prevState => ({
+  //       menuOpen: !prevState.menuOpen,
+  //     }),
+  //   );
+  // }
+
+  login = () => {
+    db.auth(this.updateUserInfo, this.updateMap);
+  }
+
+  updateMap = (notes) => {
+    this.setState({ notes: Map(notes) });
+  }
+
+  updateUserInfo = (uid, displayName) => {
+    this.setState({
+      uid,
+      displayName,
     });
+  }
+
+  logout = () => {
+    db.deAuth();
+    this.setState({ uid: null });
+    console.log(`user ${this.state.displayName} signed out`);
   }
 
   /**
    * Creates a note.
    */
-  createNote = (title) => {
-    // // increments a new key via a counter
-    // this.setState(
-    //   prevState => ({
-    //     keyCounter: prevState.keyCounter + 1,
-    //   }),
-    // );
-    // creates the note in object notation form
+  createNote = (title, text) => {
     const newNote = {
       id: '',
       title,
-      text: '',
+      text,
       x: 70,
       y: 50,
-      z: this.getHighestZ(),
+      z: this.getHighestZ() + 2, // new note is always highest
     };
-
-    db.addNote(newNote);
-    // adds note into the map
-    // this.setState(
-    //   prevState => ({
-    //     notes: prevState.notes.set(noteData.id, noteData),
-    //   }),
-    // );
+    db.addNote(this.state.uid, newNote);
   }
 
   /**
    * Updates any properties of existing notes.
    */
   updateNote = (id, fields) => {
-    db.updateNote(id, fields);
-    // this.setState(prevState => ({
-    //   notes: prevState.notes.update(id, (n) => { return Object.assign({}, n, fields); }),
-    // }));
+    db.updateNote(this.state.uid, id, fields);
   }
 
   /**
@@ -87,24 +116,49 @@ class App extends Component {
    */
   deleteNote = (id) => {
     db.deleteNote(id);
-    // this.setState(
-    //   prevState => ({
-    //     notes: prevState.notes.delete(id),
-    //   }),
-    // );
+  }
+
+  renderWhetherLoggedIn() {
+    if (this.state.uid === null) {
+      return (
+        <div>
+          <Nav loggedIn={false} login={this.login} updateUserInfo={this.updateUserInfo} />
+          <div id="welcome">
+            <Paper elevation={1} id="welcomeCard">
+              <Typography className="welcomeText" variant="h2">
+                This is Jot.
+              </Typography>
+              <Typography className="welcomeText" variant="subtitle1">
+                The new note taker. Dynamic, flexible, and on-the-cloud.
+              </Typography>
+              <div id="loginArea">
+                <Button onClick={this.login} variant="contained" color="primary">Login</Button>
+              </div>
+            </Paper>
+          </div>
+        </div>
+      );
+    } else {
+      const returnedNotes = this.state.notes.entrySeq().map(([id, note]) => <Note note={note} key={id} updateNote={this.updateNote} deleteNote={this.deleteNote} getHighestZ={this.getHighestZ} />);
+      return (
+        <div>
+          <Nav loggedIn displayName={this.state.displayName} updateUserInfo={this.updateUserInfo} logout={this.logout} />
+          <div>
+            <NoteMaker createNote={this.createNote} />
+          </div>
+          <div id="notes">
+            {returnedNotes}
+          </div>
+        </div>
+      );
+    }
   }
 
   render() {
-    const returnedNotes = this.state.notes.entrySeq().map(([id, note]) => <Note note={note} key={id} updateNote={this.updateNote} deleteNote={this.deleteNote} getHighestZ={this.getHighestZ} />);
     return (
-      <div>
-        <div>
-          <NoteMaker createNote={this.createNote} />
-        </div>
-        <div id="notes">
-          {returnedNotes}
-        </div>
-      </div>
+      <MuiThemeProvider theme={theme}>
+        {this.renderWhetherLoggedIn()}
+      </MuiThemeProvider>
     );
   }
 }

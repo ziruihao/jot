@@ -1,7 +1,33 @@
-.note {
-    position: absolute;
-    border-style: dashed;
-    border-width: 1px;
-    box-shadow: 5px 10px;
-    background: white;
+body {
+    margin: 0;
+    padding: 0;
+    #main {
+        #welcome {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+            #welcomeCard {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                padding: 50px;
+                .welcomeText{
+                    margin-bottom: 30px;
+                }
+                #buttonArea {
+                    margin-top: 20px;
+                    margin-bottom: 50px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                }
+            }
+        }
+        .note {
+            position: absolute;
+        }
+    }
 }
