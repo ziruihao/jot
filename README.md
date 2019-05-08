@@ -1,4 +1,6 @@
 # Jot - A New Note Taker
+### Tech Stack
+React and Google Firebase. Simply `yarn` and `yarn start` the client application. Deployed version is at https://jot-cs52.surge.sh/.
 ## Features
 ### Google Authenatication
 The app uses Firebase's Google Authentication API to allow users to login with their Google accounts.
