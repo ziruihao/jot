@@ -3,7 +3,6 @@ import 'firebase/auth';
 
 // Initialize Firebase
 const config = {
-  apiKey: 'AIzaSyDD3GOkGJk_aVdx1xl4EOv9EFQ_QzZ0XgQ',
   authDomain: 'cs52-react-notes-43057.firebaseapp.com',
   databaseURL: 'https://cs52-react-notes-43057.firebaseio.com',
   projectId: 'cs52-react-notes-43057',
